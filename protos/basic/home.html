@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test app</title>
+    <script src="qrc:///qtwebchannel/qwebchannel.js" type="text/javascript"></script>
+    <script src="./scripts/howdy.js" type="text/javascript"></script>
+</head>
+<body>
+    <h1>Testing</h1>
+    <p>Click button to test the bridge/channel to the backend</p>
+    <button id="test_me">Test</button>
+
+    <script type="text/javascript">
+
+        function app_loaded(){
+            function callme(msg){
+                console.log("signal from backend", msg);
+                debugger;
+            }
+            window.switchboard.stuff_happened.connect(callme);
+            window.switchboard.hello("world").then(x=>console.log(x));
+            window.switchboard.do_cb('test123').then(x=>console.log(x));
+
+        }
+
+        function main(){
+            new QWebChannel(qt.webChannelTransport, function(channel){
+                console.log(channel);
+                window.switchboard = channel.objects.switchboard;
+
+                app_loaded();
+            });
+
+        }
+
+        window.addEventListener('load', main);
+    </script>
+</body>
+</html>
