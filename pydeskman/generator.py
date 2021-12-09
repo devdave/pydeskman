@@ -16,6 +16,8 @@ class DeskManDebugWidget(QtWidgets.QWidget):
 
     def setup_ui(self):
         self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.setContentsMargins(0,0,0,0)
+
         self.debugger = QtWebEngineWidgets.QWebEngineView(self)
         self.layout.addWidget(self.debugger)
         self.setGeometry(0,0, 800, 400)
@@ -34,6 +36,7 @@ class DeskManWidget(QtWidgets.QWidget):
     def setup_ui(self):
 
         self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.setContentsMargins(0,0,0,0)
         self.browser = QtWebEngineWidgets.QWebEngineView(self)
         self.browser.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
