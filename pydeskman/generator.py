@@ -51,6 +51,12 @@ class DeskManWidget(QtWidgets.QWidget):
         self.move(qr.topLeft())
 
 
+    def closeEvent(self, event:QtGui.QCloseEvent) -> None:
+        # Shut down the application if the main widget is closed
+        app = QtWidgets.QApplication.instance()
+        app.closeAllWindows()
+
+
 class Generator:
 
     def __init__(self, title, dims, seed, switchboard, view_dir = None):
