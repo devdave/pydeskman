@@ -8,6 +8,7 @@ from pydeskman import GenerateApp
 
 home_view = (pl.Path(__file__).parent / "home.html")
 
+
 class AppLogic(QObject):
 
 
@@ -26,13 +27,11 @@ class AppLogic(QObject):
     stuff_happened = Signal(str)
 
 
-
-
 def main():
 
     assert home_view.exists(), home_view
 
-    GenerateApp("Test", dict(height=600, width=1200), home_view, AppLogic)
+    GenerateApp("Test", dict(height=600, width=1200), home_view, AppLogic(), enable_debug=True)
 
 
 
