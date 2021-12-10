@@ -2,6 +2,7 @@ import sys
 
 from PySide2 import QtWidgets
 from PySide2 import QtCore
+from PySide2 import QtGui
 
 from PySide2 import QtWebEngineWidgets
 from PySide2.QtWebChannel import QWebChannel
@@ -80,8 +81,7 @@ class Generator:
         self.seed = seed
         self.seed_url = None
         self.seed_page = None
-        self.switchboard = switchboard
-        self.switchboard_obj = None
+        self.switchboard_obj = switchboard
         self.switchchannel = None
         self.view_dir = view_dir
 
@@ -112,23 +112,14 @@ class Generator:
             self.debugger.attach_to_webview(self.view.browser)
             self.debugger.show()
 
-
-
-
     def attach_switchboard(self):
 
-        self.switchboard_obj = self.switchboard()
         self.switchchannel = QWebChannel(self.view)
         self.switchchannel.registerObject('switchboard', self.switchboard_obj)
         self.seed_page.setWebChannel(self.switchchannel)
 
 
-
-
-
-
-
-def GenerateApp(title, dims, seed_page, switchboard, view_dir=None, enable_debug=True):
+def GenerateApp(title, dims, seed_page, switchboard, view_dir=None, enable_debug=False):
 
     desktop = Generator(title, dims, seed_page, switchboard, view_dir)
 
