@@ -5,6 +5,7 @@ from PySide2 import QtCore
 from PySide2 import QtGui
 
 from PySide2 import QtWebEngineWidgets
+from PySide2.QtWebEngineWidgets import QWebEnginePage
 from PySide2.QtWebChannel import QWebChannel
 
 class SeedPage(QWebEnginePage):
@@ -72,9 +73,6 @@ class DeskManDebugWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.debugger)
         self.setGeometry(0,0, 800, 400)
 
-
-
-
     def attach_to_webview(self, browser: QtWebEngineWidgets.QWebEngineView):
         browser.page().setDevToolsPage(self.debugger.page())
 
@@ -136,7 +134,7 @@ class Generator:
         self.seed_url = None
         self.seed_page = None
         self.switchboard_obj = switchboard
-        self.switchchannel = None
+
         self.view_dir = view_dir
 
         self.view = None
@@ -152,13 +150,9 @@ class Generator:
         self.view.center()
 
         self.seed_url = QtCore.QUrl.fromLocalFile(str(self.seed))
-        self.seed_page = QtWebEngineWidgets.QWebEnginePage()
-        self.seed_page.setUrl(self.seed_url)
-
-        self.attach_switchboard()
-
+        self.seed_page = SeedPage(None, self.switchboard_obj)
+        self.seed_page.load(self.seed_url)
         self.view.browser.setPage(self.seed_page)
-
 
         # debugger
         if enable_debug is True:
