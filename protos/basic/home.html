@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Test app</title>
-    <script src="qrc:///qtwebchannel/qwebchannel.js" type="text/javascript"></script>
+<!--    <script src="qrc:///qtwebchannel/qwebchannel.js" type="text/javascript"></script>-->
     <script src="./scripts/howdy.js" type="text/javascript"></script>
 </head>
 <body>
@@ -13,7 +13,7 @@
 
     <script type="text/javascript">
 
-        function app_loaded(){
+        function app_loaded(channel){
             function callme(msg){
                 console.log("signal from backend", msg);
                 debugger;
@@ -22,19 +22,19 @@
             window.switchboard.hello("world").then(x=>console.log(x));
             window.switchboard.do_cb('test123').then(x=>console.log(x));
 
-        }
-
-        function main(){
-            new QWebChannel(qt.webChannelTransport, function(channel){
-                console.log(channel);
-                window.switchboard = channel.objects.switchboard;
-
-                app_loaded();
-            });
+            console.log("App Loaded is complete")
 
         }
 
-        window.addEventListener('load', main);
+        // function main(){
+        //     new QWebChannel(qt.webChannelTransport, function(channel){
+        //         console.log(channel);
+        //         window.switchboard = channel.objects.switchboard;
+        //         app_loaded(channel);
+        //     });
+        //
+        // }
+        // window.addEventListener('load', main);
     </script>
 </body>
 </html>
