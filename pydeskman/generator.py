@@ -7,6 +7,10 @@ from PySide2 import QtGui
 from PySide2 import QtWebEngineWidgets
 from PySide2.QtWebChannel import QWebChannel
 
+class SeedPage(QWebEnginePage):
+
+    def __init__(self, parent = None, switchboard = None):
+        QWebEnginePage.__init__(self, parent)
 
 class DeskManDebugWidget(QtWidgets.QWidget):
 
