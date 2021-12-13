@@ -54,8 +54,13 @@ class DeskManWidget(QtWidgets.QWidget):
 
     def closeEvent(self, event:QtGui.QCloseEvent) -> None:
         # Shut down the application if the main widget is closed
-        app = QtWidgets.QApplication.instance()
-        app.closeAllWindows()
+        try:
+            app = QtWidgets.QApplication.instance()
+            app.closeAllWindows()
+        except KeyboardInterrupt:
+            # try again
+            app = QtWidgets.QApplication.instance()
+            app.closeAllWindows()
 
 
 class Generator:
