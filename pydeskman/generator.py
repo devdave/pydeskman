@@ -16,6 +16,45 @@ class SeedPage(QWebEnginePage):
         if switchboard is None:
             raise ValueError("Switchboard/backend instance must be passed to SeedPage initializer")
 
+        self.switchboard = switchboard
+        self.loadFinished.connect(self.onLoadFinished)
+
+
+
+    @QtCore.Slot(bool)
+    def onLoadFinished(self, ok):
+        if ok:
+            self.load_qwebchannel()
+            self.load_switchboard()
+
+    def load_qwebchannel(self):
+        file = QtCore.QFile(":/qtwebchannel/qwebchannel.js")
+        if file.open(QtCore.QIODevice.ReadOnly):
+            content = file.readAll()
+            file.close()
+            self.runJavaScript(content.data().decode())
+        if self.webChannel() is None:
+            channel = QWebChannel(self)
+            self.setWebChannel(channel)
+
+    def load_switchboard(self):
+        if self.webChannel() is not None:
+            self.webChannel().registerObject('switchboard', self.switchboard)
+
+            script = r"""    
+                        new QWebChannel(qt.webChannelTransport, function(channel){
+                            console.log(channel);
+                            window.switchboard = channel.objects.switchboard;
+                            app_loaded(channel);
+                        });
+    
+            """
+            self.runJavaScript(script)
+
+
+
+
+
 class DeskManDebugWidget(QtWidgets.QWidget):
 
     def __init__(self, *args, **kwargs):
