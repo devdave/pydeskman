@@ -60,6 +60,8 @@ class DeskManDebugWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.layout = None
+        self.debugger = None
         self.setup_ui()
 
     def setup_ui(self):
