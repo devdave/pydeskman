@@ -12,6 +12,10 @@ class SeedPage(QWebEnginePage):
     def __init__(self, parent = None, switchboard = None):
         QWebEnginePage.__init__(self, parent)
 
+
+        if switchboard is None:
+            raise ValueError("Switchboard/backend instance must be passed to SeedPage initializer")
+
 class DeskManDebugWidget(QtWidgets.QWidget):
 
     def __init__(self, *args, **kwargs):
