@@ -16,3 +16,11 @@
 
     border: solid thin black;
 }
+
+.cell[data-player='human'] {
+    background: blue;
+}
+
+.cell[data-player='cpu'] {
+    background: red;
+}
