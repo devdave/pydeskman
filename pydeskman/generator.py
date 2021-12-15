@@ -19,6 +19,7 @@ class SeedPage(QWebEnginePage):
 
         self.switchboard = switchboard
         self.loadFinished.connect(self.onLoadFinished)
+        print("SeedPage init'd")
 
 
 
@@ -27,6 +28,7 @@ class SeedPage(QWebEnginePage):
         if ok:
             self.load_qwebchannel()
             self.load_switchboard()
+            print("on loaded")
 
     def load_qwebchannel(self):
         file = QtCore.QFile(":/qtwebchannel/qwebchannel.js")
