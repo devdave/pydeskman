@@ -19,19 +19,59 @@
                 <div class="cell" data-pos="2"></div>
             </div>
             <div class="row" data-index="1">
-                <div class="cell" data-pos="3"></div>
-                <div class="cell" data-pos="4"></div>
-                <div class="cell" data-pos="5"></div>
+                <div class="cell" data-pos="0"></div>
+                <div class="cell" data-pos="1"></div>
+                <div class="cell" data-pos="2"></div>
             </div>
             <div class="row" data-index="2">
-                <div class="cell" data-pos="6"></div>
-                <div class="cell" data-pos="7"></div>
-                <div class="cell" data-pos="8"></div>
+                <div class="cell" data-pos="0"></div>
+                <div class="cell" data-pos="1"></div>
+                <div class="cell" data-pos="2"></div>
             </div>
         </div>
         <div id="controls">
             <button id="reset">Reset</button>
         </div>
     </div>
+
+    <script type="text/javascript"}>
+
+        async function update() {
+            let raw = await switchboard.getState();
+            let state = JSON.parse(raw)
+            console.log("New State", state);
+            for(let [y,row] of Object.entries(state)) {
+                for(let [x, cell] of Object.entries(row)) {
+                    console.log(x, y, cell);
+                    set_cell(x, y, cell);
+                }
+            }
+        }
+
+        function set_cell(x, y, state){
+            let cell = document.querySelector(`div[data-index='${x}']`).querySelector(`div[data-pos='${y}']`);
+            if(cell) {
+                switch (state) {
+                    case 0:
+                        cell.dataset.player = 'none';
+                        break;
+                    case 1:
+                        cell.dataset.player = 'cpu';
+                        break;
+                    case 2:
+                        cell.dataset.player = 'human';
+                }
+            }
+        }
+
+        function app_loaded() {
+            console.log("I am alive!");
+            switchboard.stateChanged.connect(update);
+
+            document.querySelectorAll("div.cell").forEach(x=>x.addEventListener("click", evt => window.switchboard.attempt(x.dataset.pos, x.parentElement.dataset.index)));
+            document.getElementById('reset').addEventListener('click', switchboard.reset);
+
+        }
+    </script>
 </body>
 </html>
