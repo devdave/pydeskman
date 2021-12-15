@@ -53,6 +53,11 @@ class SeedPage(QWebEnginePage):
             self.runJavaScript(script)
 
 
+    def javaScriptConsoleMessage(self, level:QtWebEngineWidgets.QWebEnginePage.JavaScriptConsoleMessageLevel, message:str, lineNumber:int, sourceID:str) -> None:
+        QWebEnginePage.javaScriptConsoleMessage(self, level, message, lineNumber, sourceID)
+        print("Console.log message:", level, message, lineNumber, sourceID)
+
+
 
 
 
