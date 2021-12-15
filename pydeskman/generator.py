@@ -64,7 +64,8 @@ class SeedPage(QWebEnginePage):
 class DeskManDebugWidget(QtWidgets.QWidget):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        QtWidgets.QWidget.__init__(self, *args, **kwargs)
+        # super(QtWidgets.QWidget, self).__init__(*args, **kwargs)
 
         self.layout = None
         self.debugger = None
