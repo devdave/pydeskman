@@ -73,6 +73,8 @@ class GameLogic:
 
     def __init__(self, state: GameState):
         self.state = state
+        self.scores = {'human': 0, 'cpu': 0}
+        self.status = self.PLAYING
 
     def attempt_move(self, x, y, player):
         if self.state.get(x, y) == self.EMPTY:
