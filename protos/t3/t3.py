@@ -100,8 +100,10 @@ class GameLogic:
         possible_winner = self.check()
 
         if possible_winner == self.HUMAN:
+            self.scores['human'] += 1
             return "human"
         elif possible_winner == self.CPU:
+            self.scores['cpu'] += 1
             return "cpu"
 
         return False
