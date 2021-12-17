@@ -1,3 +1,12 @@
+"""
+    Tic-Tac-Toe
+    ===========
+
+    Somewhat of a disorganized mess.
+
+    
+"""
+
 import sys
 from pathlib import Path
 from json import dumps, loads
