@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 from json import dumps, loads
 from collections import defaultdict
+import random
 
 from pydeskman import GenerateApp
 from pydeskman import QObject
