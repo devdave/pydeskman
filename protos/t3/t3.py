@@ -108,6 +108,10 @@ class GameLogic:
 
         return False
 
+    def has_free_move(self):
+        moves = 0
+        for val in self.state.board:
+
 
 
     def check(self):
@@ -169,6 +173,16 @@ class GameConnection(QObject):
     def getState(self):
         return self.logic.toJSON()
 
+
+    @Slot(result=str)
+    def getScore(self):
+        human = 0
+        cpu = 0
+
+        return dumps(dict(human=human, cpu=cpu))
+
+
+    # TODO - state property doesn't seem to want to update.  Need to do research on why
     state = Property(str, getState)
 
     @Slot(int, int, result=bool)
