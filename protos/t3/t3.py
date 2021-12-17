@@ -114,6 +114,7 @@ class GameLogic:
 
 
 
+
     def check(self):
         # These could be done with vectors BUT hardcode for simplicity
         horz = [
