@@ -48,6 +48,9 @@ class GameState:
         self.board[pos] = value
         return self.board[pos] == value
 
+    def set_position(self, position, value):
+        self.board[position] = value
+
     def toJSON(self):
         result = defaultdict(dict)
         for x in range(0, self.size):
