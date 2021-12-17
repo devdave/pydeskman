@@ -64,6 +64,11 @@ class GameLogic:
     EMPTY = 0
     CPU = 1
     HUMAN = 2
+
+    PLAYING = 0
+    WINNER = 1
+    DEADLOCK = 2
+
     state: GameState
 
     def __init__(self, state: GameState):
