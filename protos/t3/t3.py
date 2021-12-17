@@ -83,6 +83,17 @@ class GameLogic:
 
         return False
 
+    def cpu_move(self):
+        moves = []
+        for pos, value in enumerate(self.state.board):
+            if value == 0:
+                moves.append(pos)
+
+        if len(moves) > 0:
+            move = random.choice(moves)
+            self.state.set_position(move, self.CPU)
+
+
     def has_winner(self):
 
         possible_winner = self.check()
