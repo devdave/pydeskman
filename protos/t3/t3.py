@@ -187,14 +187,23 @@ class GameConnection(QObject):
 
     @Slot(int, int, result=bool)
     def attempt(self, x, y):
+
         print(f"Attempting move ({x=}, {y})")
         result = self.logic.attempt_move(x, y, self.logic.HUMAN)
-        if result is True:
-            print("\tMove accepted")
-            self.do_update()
-        else:
-            print("\t Move Failed")
 
+        status = self.logic.has_winner()
+        if status is not False:
+            print("TODO - Announce winner is likely human")
+            self.do_update()
+            return
+
+        self.logic.cpu_move()
+
+        status = self.logic.has_winner()
+        if status is not False:
+            print("TODO - Announce winner is likely cpu")
+            self.do_update()
+            return
 
         return result
 
