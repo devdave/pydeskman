@@ -214,6 +214,10 @@ class GameConnection(QObject):
         self.stateChanged.emit()
         return True
 
+    @Slot(result=bool)
+    def clear_score(self):
+        return False
+
 
 
 
