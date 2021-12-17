@@ -42,10 +42,14 @@
             console.log("New State", state);
             for(let [y,row] of Object.entries(state)) {
                 for(let [x, cell] of Object.entries(row)) {
-                    console.log(x, y, cell);
                     set_cell(x, y, cell);
                 }
             }
+
+            let raw_score = await switchboard.getScore();
+            let score = JSON.parse(raw_score);
+            console.log("Score is ", score);
+
         }
 
         function set_cell(x, y, state){
@@ -70,6 +74,9 @@
 
             document.querySelectorAll("div.cell").forEach(x=>x.addEventListener("click", evt => window.switchboard.attempt(x.dataset.pos, x.parentElement.dataset.index)));
             document.getElementById('reset').addEventListener('click', switchboard.reset);
+
+            update().then(_=>console.log("Board updated"));
+            console.log("App updated")
 
         }
     </script>
