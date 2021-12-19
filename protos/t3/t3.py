@@ -4,7 +4,7 @@
 
     Somewhat of a disorganized mess.
 
-    
+
 """
 
 import sys
@@ -26,31 +26,31 @@ def int2coord(index, size=3):
 
     return dict(x=x, y=y)
 
-class GameState:
+class GameBoard:
 
     def __init__(self, size = 3):
         self.size = 3 # 3 width/height
-        self.board = []
+        self.data = []
 
         self.reset()
 
     def reset(self):
-        self.board = [0,0,0,0,0,0,0,0,0]
+        self.data = [0,0,0,0,0,0,0,0,0]
 
     def get(self, x, y ):
         pos = (x*self.size) + y
-        return self.board[pos]
+        return self.data[pos]
 
-    def raw_get(self, position):
-        return self.board[position]
+    def get_position(self, position):
+        return self.data[position]
 
     def set(self, x, y, value):
         pos = (x*self.size) + y
-        self.board[pos] = value
-        return self.board[pos] == value
+        self.data[pos] = value
+        return self.data[pos] == value
 
     def set_position(self, position, value):
-        self.board[position] = value
+        self.data[position] = value
 
     def toJSON(self):
         result = defaultdict(dict)
@@ -67,32 +67,34 @@ class GameLogic:
     HUMAN = 2
 
     PLAYING = 0
-    WINNER = 1
+    WON = 1
     DEADLOCK = 2
 
-    state: GameState
+    board: GameBoard
 
-    def __init__(self, state: GameState):
-        self.state = state
+    def __init__(self, board: GameBoard):
+        self.board = board
         self.scores = {'human': 0, 'cpu': 0}
         self.status = self.PLAYING
 
     def attempt_move(self, x, y, player):
-        if self.state.get(x, y) == self.EMPTY:
-            self.state.set(x, y, player)
+        if self.board.get(x, y) == self.EMPTY:
+            self.board.set(x, y, player)
+            print(f"Set {x=}, {y=} to {player=}")
             return True
 
+        print(f"Failed {x=}, {y=} to {player=}")
         return False
 
     def cpu_move(self):
         moves = []
-        for pos, value in enumerate(self.state.board):
+        for pos, value in enumerate(self.board.data):
             if value == 0:
                 moves.append(pos)
 
         if len(moves) > 0:
             move = random.choice(moves)
-            self.state.set_position(move, self.CPU)
+            self.board.set_position(move, self.CPU)
 
 
     def has_winner(self):
@@ -109,8 +111,7 @@ class GameLogic:
         return False
 
     def has_free_move(self):
-        moves = 0
-        for val in self.state.board:
+        return 0 in self.board.data
 
 
 
@@ -139,7 +140,7 @@ class GameLogic:
                 for cells in tests:
                     collect = []
                     for index in cells:
-                        collect.append(self.state.raw_get(index) == player)
+                        collect.append(self.board.get_position(index) == player)
 
                     if all(collect) is True:
                         return player
@@ -147,7 +148,7 @@ class GameLogic:
         return False
 
     def toJSON(self):
-        return self.state.toJSON()
+        return self.board.toJSON()
 
 
 
@@ -162,6 +163,15 @@ class GameConnection(QObject):
 
         self.logic = game_logic
         self.view = None
+
+        self.page = None
+        self.view = None
+
+    def wantPage(self, pageObj):
+        self.page = pageObj
+
+    def wantView(self, view):
+        self.view = view
 
     def do_update(self):
         # update scores
@@ -189,29 +199,43 @@ class GameConnection(QObject):
     @Slot(int, int, result=bool)
     def attempt(self, x, y):
 
-        print(f"Attempting move ({x=}, {y})")
-        result = self.logic.attempt_move(x, y, self.logic.HUMAN)
+        if self.logic.status != self.logic.PLAYING:
+            if self.logic.status == self.logic.DEADLOCK:
+                print("No more moves")
+            elif self.logic.status== self.logic.WON:
+                print("Someone has won!")
 
-        status = self.logic.has_winner()
-        if status is not False:
-            print("TODO - Announce winner is likely human")
-            self.do_update()
             return
 
-        self.logic.cpu_move()
 
-        status = self.logic.has_winner()
-        if status is not False:
-            print("TODO - Announce winner is likely cpu")
+
+        try:
+            print(f"Attempting move ({x=}, {y})")
+            result = self.logic.attempt_move(x, y, self.logic.HUMAN)
+            status = self.logic.has_winner()
+            if status is not False:
+                self.logic.status = self.logic.WON
+                self.logic.scores['human'] += 1
+                print("TODO - Announce winner is likely human")
+                return
+
+            self.logic.cpu_move()
+
+            status = self.logic.has_winner()
+            if status is not False:
+                self.logic.status = self.logic.WON
+                self.logic.scores['cpu'] += 1
+                print("TODO - Announce winner is likely cpu")
+                return
+        finally:
             self.do_update()
-            return
 
-        return result
+        return
 
     @Slot(result=bool)
     def reset(self):
         print("Game is being reset")
-        self.logic.state.reset()
+        self.logic.board.reset()
         self.stateChanged.emit()
         return True
 
@@ -221,15 +245,12 @@ class GameConnection(QObject):
 
 
 
-
-
-
 def main(argv):
 
     main_view = (Path(__file__).parent / 'view' / 'main.html')
     assert main_view.exists()
 
-    bridge = GameConnection(GameLogic(GameState()))
+    bridge = GameConnection(GameLogic(GameBoard()))
     GenerateApp("Tic-tac-toe", dict(height=400, width=350), main_view, bridge, main_view.parent, enable_debug=True)
 
 
