@@ -73,7 +73,9 @@
             switchboard.stateChanged.connect(update);
 
             document.querySelectorAll("div.cell").forEach(x=>x.addEventListener("click", evt => window.switchboard.attempt(x.dataset.pos, x.parentElement.dataset.index)));
-            document.getElementById('reset').addEventListener('click', switchboard.reset);
+            let resetBtn = document.getElementById('reset')
+            resetBtn.addEventListener('click', x=>switchboard.reset())
+
 
             update().then(_=>console.log("Board updated"));
             console.log("App updated")
