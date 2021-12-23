@@ -14,19 +14,42 @@ from collections import defaultdict
 import random
 
 from pydeskman import GenerateApp
-from pydeskman import QObject
+from pydeskman import QObject, QWidget, QWebEnginePage
 from pydeskman import Property, Slot, Signal
 
 def coord2int(x, y, size=3):
+    """
+        Converts a pair of coordinates to a scalar/index value
+
+    :param x:
+    :param y:
+    :param size: the width/height of a perfect square
+    :return:
+    """
     return (x*size) + y
 
 def int2coord(index, size=3):
+    """
+        Converts a scalar value back to coordinate pairs
+
+    :param index:
+    :param size: the width/height of a perfect square
+    :return:
+    """
+
     x = index // size
     y = index - x*size
 
     return dict(x=x, y=y)
 
 class GameBoard:
+    """
+        Manager around the game board
+
+        TODO - should the board know about player type values (human and cpu)?
+
+    """
+
 
     def __init__(self, size = 3):
         self.size = 3 # 3 width/height
@@ -62,15 +85,22 @@ class GameBoard:
 
 
 class GameLogic:
+    # Game board values
     EMPTY = 0
     CPU = 1
     HUMAN = 2
 
-    PLAYING = 0
-    WON = 1
-    DEADLOCK = 2
+    # Game status/state
+    CONTINUE = 0
+    PLAYING = 0 # intentional as a synonym
+    PLAYER_WON = 1
+    CPU_WON = 2
+    DEADLOCK = 3 # no more moves
+    BAD_MOVE = 4 # move was invalid
 
     board: GameBoard
+    scores: dict
+    status: int # Would be better as an enum but wanted to avoid overengineering
 
     def __init__(self, board: GameBoard):
         self.board = board
@@ -95,7 +125,9 @@ class GameLogic:
         if len(moves) > 0:
             move = random.choice(moves)
             self.board.set_position(move, self.CPU)
+            return True
 
+        return False
 
     def has_winner(self):
 
@@ -112,9 +144,6 @@ class GameLogic:
 
     def has_free_move(self):
         return 0 in self.board.data
-
-
-
 
     def check(self):
         # These could be done with vectors BUT hardcode for simplicity
@@ -150,12 +179,99 @@ class GameLogic:
     def toJSON(self):
         return self.board.toJSON()
 
+    def reset(self):
+        self.board.reset()
+        self.status = self.PLAYING
+
+    def run(self, x, y):
+        """
+        :param x: Player attempted cell's x  coordinate
+        :param y: Player attemptd cell's y coorinate
+        :return: GameLogic.PLAYER_WON, GameLogic.CPU_WON, GameLogic.CONTINUE, GameLogic.DEADLOCK, GameLogic.BAD_MOVE
+        """
+
+
+        """            
+            Attempts to let the Human player select a cell
+                If not empty return BAD_MOVE
+        """
+        if self.status != self.PLAYING:
+            return self.status
+
+        if self.attempt_move(x, y, self.HUMAN) is False:
+            return self.BAD_MOVE
+
+        """
+            Check for win condition
+                If true, return CPU or HUMAN won
+        """
+        win_status = self.has_winner()
+
+        if win_status is not False:
+            if win_status == "human":
+                self.status = self.PLAYER_WON
+                return self.PLAYER_WON
+            elif win_status == "cpu":
+                self.status = self.CPU_WON
+                return self.CPU_WON
+            else:
+                raise ValueError(f"{win_status=}")
+
+
+        """
+            Check for deadlock
+                return DEADLOCK if no more moves possible
+        """
+
+        if self.has_free_move() is False:
+            self.status = self.DEADLOCK
+            return self.DEADLOCK
+
+
+        """
+    
+            Attempt to let CPU select a cell
+
+            Check for win condition
+                if true return CPU or Human won
+        """
+        if self.cpu_move() is True:
+
+            win_status = self.has_winner()
+
+            if win_status is not False:
+                if win_status == "human":
+                    self.status = self.PLAYER_WON
+                    return self.PLAYER_WON
+                elif win_status == "cpu":
+                    self.status = self.CPU_WON
+                    return self.CPU_WON
+                else:
+                    raise ValueError(f"{win_status=}")
+
+        """
+
+        check for deadlock
+            return DEADLOCK
+
+        else return CONTINUE
+        """
+        if self.has_free_move is False:
+            self.status = self.DEADLOCK
+            return self.DEADLOCK
+
+
+        return self.PLAYING
+
 
 
 
 
 
 class GameConnection(QObject):
+
+    view:QWidget
+    page:QWebEnginePage
 
     def __init__(self, game_logic:GameLogic):
         QObject.__init__(self, None)
@@ -167,10 +283,10 @@ class GameConnection(QObject):
         self.page = None
         self.view = None
 
-    def wantPage(self, pageObj):
+    def wantPage(self, pageObj: QWebEnginePage):
         self.page = pageObj
 
-    def wantView(self, view):
+    def wantView(self, view: QWidget):
         self.view = view
 
     def do_update(self):
@@ -179,6 +295,7 @@ class GameConnection(QObject):
         self.stateChanged.emit()
 
     stateChanged = Signal()
+    hasMessage = Signal(str)
 
     @Slot(result=str)
     def getState(self):
@@ -187,10 +304,7 @@ class GameConnection(QObject):
 
     @Slot(result=str)
     def getScore(self):
-        human = 0
-        cpu = 0
-
-        return dumps(dict(human=human, cpu=cpu))
+        return dumps(self.logic.scores)
 
 
     # TODO - state property doesn't seem to want to update.  Need to do research on why
@@ -199,43 +313,33 @@ class GameConnection(QObject):
     @Slot(int, int, result=bool)
     def attempt(self, x, y):
 
-        if self.logic.status != self.logic.PLAYING:
-            if self.logic.status == self.logic.DEADLOCK:
-                print("No more moves")
-            elif self.logic.status== self.logic.WON:
-                print("Someone has won!")
+        # TODO move this to GameLogic
 
-            return
+        result = self.logic.run(x, y)
 
+        if result == self.logic.PLAYER_WON:
+            print("Player won")
+            self.hasMessage.emit("Player won")
 
+        elif result == self.logic.CPU_WON:
+            print("CPU won")
+            self.hasMessage.emit("CPU won")
 
-        try:
-            print(f"Attempting move ({x=}, {y})")
-            result = self.logic.attempt_move(x, y, self.logic.HUMAN)
-            status = self.logic.has_winner()
-            if status is not False:
-                self.logic.status = self.logic.WON
-                self.logic.scores['human'] += 1
-                print("TODO - Announce winner is likely human")
-                return
+        elif result == self.logic.DEADLOCK:
+            print("No more moves")
+            self.hasMessage.emit("No more moves")
 
-            self.logic.cpu_move()
+        else:
+            print(f"state {result=}")
 
-            status = self.logic.has_winner()
-            if status is not False:
-                self.logic.status = self.logic.WON
-                self.logic.scores['cpu'] += 1
-                print("TODO - Announce winner is likely cpu")
-                return
-        finally:
-            self.do_update()
-
-        return
+        self.do_update()
+        return True
 
     @Slot(result=bool)
     def reset(self):
         print("Game is being reset")
-        self.logic.board.reset()
+        self.logic.reset()
+
         self.stateChanged.emit()
         return True
 

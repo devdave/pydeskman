@@ -31,10 +31,35 @@
         </div>
         <div id="controls">
             <button id="reset">Reset</button>
+            <button id="modalbtn">Test modal</button>
+        </div>
+    </div>
+
+    <div class="modal_screen" id="modal_screen">
+        <div class="modal-content">
+            <button id="modal_close_me">X</button>
+            <h1 class="message_title">Placeholder title</h1>
+            <p class="message_body">placeholder body</p>
         </div>
     </div>
 
     <script type="text/javascript"}>
+
+        function show_model(title, message) {
+            let modal_screen = document.getElementById("modal_screen");
+            let modal_title = modal_screen.querySelector(".message_title");
+            let modal_message = modal_screen.querySelector(".message_body");
+
+            modal_title.innerHTML = title;
+            modal_message.innerHTML = message;
+            modal_screen.style.display = "block";
+
+        }
+
+        function hide_model() {
+            let modal_screen = document.getElementById("modal_screen");
+            modal_screen.style.display = "none";
+        }
 
         async function update() {
             let raw = await switchboard.getState();
@@ -49,6 +74,10 @@
             let raw_score = await switchboard.getScore();
             let score = JSON.parse(raw_score);
             console.log("Score is ", score);
+
+            let scrbrd = document.getElementById("scoreboard")
+            scrbrd.querySelector("#blue_cnt").innerHTML = score['human']
+            scrbrd.querySelector("#red_cnt").innerHTML = score['cpu']
 
         }
 
@@ -68,9 +97,21 @@
             }
         }
 
+        function show_message(msg) {
+            console.log("Backend says: ", msg);
+            show_model("Game status", msg);
+        }
+
         function app_loaded() {
+
+            document.getElementById("modalbtn").addEventListener("click", e => show_model("Test me", "Hello World"));
+            document.getElementById("modal_close_me").addEventListener("click", e=> hide_model());
+            document.getElementById("modal_screen").addEventListener("click", e=>hide_model());
+
+
             console.log("I am alive!");
             switchboard.stateChanged.connect(update);
+            switchboard.hasMessage.connect(show_message);
 
             document.querySelectorAll("div.cell").forEach(x=>x.addEventListener("click", evt => window.switchboard.attempt(x.dataset.pos, x.parentElement.dataset.index)));
             let resetBtn = document.getElementById('reset')
