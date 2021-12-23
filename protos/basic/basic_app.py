@@ -11,8 +11,6 @@ home_view = (pl.Path(__file__).parent / "home.html")
 
 class AppLogic(QObject):
 
-
-
     @Slot(str, result=str)
     def hello(self, name):
         print("Greeting client/frontend")
