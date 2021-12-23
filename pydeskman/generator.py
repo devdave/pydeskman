@@ -8,6 +8,7 @@ from PySide2 import QtWebEngineWidgets
 from PySide2.QtWebEngineWidgets import QWebEnginePage
 from PySide2.QtWebChannel import QWebChannel
 
+
 class SeedPage(QWebEnginePage):
 
     def __init__(self, parent = None, switchboard = None):
@@ -41,6 +42,10 @@ class SeedPage(QWebEnginePage):
             self.setWebChannel(channel)
 
     def load_switchboard(self):
+
+        if hasattr(self.switchboard, 'wantPage'):
+            self.switchboard.wantPage(self)
+
         if self.webChannel() is not None:
             self.webChannel().registerObject('switchboard', self.switchboard)
 
@@ -156,6 +161,9 @@ class Generator:
 
         self.view.setGeometry(0, 0, self.width, self.height)
         self.view.center()
+
+        if hasattr(self.switchboard_obj, 'wantView'):
+            self.switchboard_obj.wantView(self.view)
 
         self.seed_url = QtCore.QUrl.fromLocalFile(str(self.seed))
         self.seed_page = SeedPage(None, self.switchboard_obj)
