@@ -55,7 +55,6 @@ class SeedPage(QWebEnginePage):
                             window.switchboard = channel.objects.switchboard;
                             app_loaded(channel);
                         });
-    
             """
             self.runJavaScript(script)
 
