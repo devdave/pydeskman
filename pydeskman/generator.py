@@ -176,12 +176,6 @@ class Generator:
             self.debugger.attach_to_webview(self.view.browser)
             self.debugger.show()
 
-    def attach_switchboard(self):
-
-        self.switchchannel = QWebChannel(self.view)
-        self.switchchannel.registerObject('switchboard', self.switchboard_obj)
-        self.seed_page.setWebChannel(self.switchchannel)
-
 
 def GenerateApp(title, dims, seed_page, switchboard, view_dir=None, enable_debug=False):
 
