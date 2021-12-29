@@ -113,6 +113,9 @@ class DeskManWidget(QtWidgets.QWidget):
         self.browser = QtWebEngineWidgets.QWebEngineView(self)
         self.browser.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
+        #TODO make this user/app configurable and not hardwired
+        self.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint);
+
         self.layout.addWidget(self.browser)
 
     def center(self):
