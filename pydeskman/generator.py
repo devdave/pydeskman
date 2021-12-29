@@ -140,6 +140,15 @@ class DeskManWidget(QtWidgets.QWidget):
 
 class Generator:
 
+    height: int
+    width: int
+    seed: T.Union[str, Path]
+    switchboard_obj: QtCore.QObject
+    view_dir: T.Union[str, Path]
+    view: QtWidgets.QWidget
+    debugger: T.Union[None, QtWidgets.QWidget]
+    app: QtWidgets.QApplication
+
     def __init__(self, title, dims, seed, switchboard, view_dir = None):
         """
 
