@@ -3,8 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>Music player</title>
+    <link rel="stylesheet" href="./style/main.css">
+
 </head>
 <body>
+    <div id="player_body">
+        <div class="info_behavior">
+            <div class="info">
+                <span class="time_pieces">
+                    <div class="time_element current_time">00:00</div>
+                </span>
+                <br style="clear: both">
+                <div class="track_marque"><span class="artist">Artist</span> - <span class="title">Title</span> (<span class="length">99:99</span>) </div>
+            </div>
+            <div class="behavior">
+                <button>Loop</button>
+                <br>
+                <button>Random</button>
+            </div>
+        </div>
+        <div class="slider_loaders">
+            <div class="slider">
+                <input type="range" min="0" max="100" value="0" id="position">
+            </div>
+            <div class="loaders">
+                <button id="open_song">Open</button>
+                <button id="show_pl">PL</button>
+                <button id="show_ml">ML</button>
+            </div>
+        </div>
+        <div class="controls_volume">
+            <div class="controls">
+                <button id="previous">Rewind</button>
+                <button id="play">Play</button>
+                <button id="pause">Pause</button>
+                <button id="stop">Stop</button>
+                <button id="next">Next</button>
+            </div>
+            <div class="volume">
+                <input type="range" min="0" max="100" value="100" id="volume">
+            </div>
+        </div>
+
+
+    </div>
+
+
+
 
     <script>
         function app_loaded(channel) {

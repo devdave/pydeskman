@@ -1,0 +1,39 @@
+
+#player_body {
+    display: flex;
+    flex-direction: column;
+}
+
+.info_behavior {
+    display: flex;
+    flex-direction: row;
+}
+
+.info {
+    width: 80vw;
+}
+
+.info .time_element {
+    float: left;
+}
+
+.slider_loaders {
+    display: flex;
+    flex-direction: row;
+}
+
+.slider {
+    width: 60vw;
+}
+
+#position {
+    width: 100%;
+}
+
+#volume {
+    width: 60vw;
+}
+
+.loaders {
+
+}
