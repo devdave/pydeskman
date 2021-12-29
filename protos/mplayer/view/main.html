@@ -50,10 +50,28 @@
 
 
 
+    <script type="text/javascript" src="./js/main.js"></script>
+    <script type="text/javascript">
 
-    <script>
+        function song_loaded(song) {
+            console.log(song)
+        }
+
+        function new_song_ready(metadata) {
+            console.log(metadata)
+        }
+
         function app_loaded(channel) {
-            alert("I am alive!");
+
+
+           // document.getElementById("open_song").addEventListener('click', e=> switchboard.request_load_dlg().then(song_loaded));
+
+            window.mplayer_app = new MPlayerLogic(this.switchboard, channel);
+
+            window.mplayer_app.setup(document, window);
+
+            // switchboard.newSong.connect(song_loaded);
+
         }
     </script>
 </body>
