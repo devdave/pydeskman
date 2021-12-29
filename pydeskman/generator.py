@@ -1,4 +1,8 @@
 import sys
+import typing as T
+
+if T.TYPE_CHECKING is True:
+    from pathlib import Path
 
 from PySide2 import QtWidgets
 from PySide2 import QtCore
