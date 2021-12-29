@@ -212,8 +212,7 @@ def GenerateApp(title, dims, seed_page, switchboard, view_dir=None, enable_debug
 
     desktop = Generator(title, dims, seed_page, switchboard, view_dir)
 
-    app = QtWidgets.QApplication(sys.argv)
-    desktop.build(app, enable_debug = enable_debug)
+    desktop.build(sys.argv, enable_debug = enable_debug)
     desktop.view.show()
 
-    sys.exit(app.exec_())
+    desktop.run()
