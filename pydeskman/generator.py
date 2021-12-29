@@ -177,7 +177,11 @@ class Generator:
         self.view = None
         self.debugger = None
 
-    def build(self, app, enable_debug = False):
+        self.app = None
+
+    def build(self, argv, enable_debug = False):
+
+        self.app = QtWidgets.QApplication(argv)
 
         self.view = DeskManWidget()
         self.view.setup_ui()
@@ -199,6 +203,9 @@ class Generator:
             self.debugger = DeskManDebugWidget()
             self.debugger.attach_to_webview(self.view.browser)
             self.debugger.show()
+
+    def run(self):
+        sys.exit(self.app.exec_())
 
 
 def GenerateApp(title, dims, seed_page, switchboard, view_dir=None, enable_debug=False):
