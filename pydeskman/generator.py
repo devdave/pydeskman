@@ -98,6 +98,8 @@ class DeskManDebugWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.debugger)
         self.setGeometry(0,0, 800, 400)
 
+
+
     def attach_to_webview(self, browser: QtWebEngineWidgets.QWebEngineView):
         browser.page().setDevToolsPage(self.debugger.page())
 
@@ -216,3 +218,6 @@ def GenerateApp(title, dims, seed_page, switchboard, view_dir=None, enable_debug
     desktop.view.show()
 
     desktop.run()
+
+
+QuickStart = GenerateApp
