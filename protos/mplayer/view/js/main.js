@@ -15,6 +15,12 @@ class MPlayerLogic {
 
 
     setup(document, window) {
+        this.position_elm = document.getElementById("position");
+        this.title_elm = document.querySelector("#player_body .title");
+        this.artist_elm = document.querySelector("#player_body .artist");
+        this.length_elm = document.querySelector("#player_body .length");
+        this.current_time_elm = document.getElementsByClassName('current_time')[0];
+
         document.getElementById("open_song").addEventListener("click", evt => this.switchboard.request_load_dlg().then(this.on_file_load.bind(this)));
 
         this.switchboard.newSong.connect(this.on_new_song.bind(this));
@@ -28,10 +34,8 @@ class MPlayerLogic {
         document.getElementById("pause").addEventListener("click", evt => this.switchboard.pause());
         document.getElementById("stop").addEventListener("click", evt => this.switchboard.stop());
 
-        this.position_elm = document.getElementById("position");
-        this.title_elm = document.querySelector("#player_body .title");
-        this.artist_elm = document.querySelector("#player_body .artist");
-        this.length_elm = document.querySelector("#player_body .length");
+        this.position_elm.addEventListener('input', this.user_adjusted_position.bind(this));
+
 
     }
 
