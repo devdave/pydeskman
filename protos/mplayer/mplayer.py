@@ -193,14 +193,18 @@ class Switchboard(QObject):
 
 
 
-def main():
+def main(argv):
     musicman = MusicManager()
     switchboard = Switchboard(musicman)
 
     HERE = Path(__file__).parent
 
-    app = GenerateApp("Music player", dict(width=600, height=150), HERE / "view/main.html", switchboard, enable_debug=True)
+    generator = Generator("Music player", dict(width=600, height=150), HERE / "view/main.html", switchboard)
+
+    generator.build(argv, enable_debug=True)
+
+    generator.run()
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
