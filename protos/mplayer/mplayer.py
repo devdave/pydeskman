@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from json import dumps, loads
 
@@ -5,10 +6,10 @@ import typing as T
 
 from PySide2.QtWidgets import QFileDialog
 
-from pydeskman import GenerateApp
+from pydeskman import GenerateApp, Generator
 from pydeskman import QObject, Slot, Signal, Property, QTimer
 
-from pybass3 import Song
+from pybass3 import Song, BassException
 from pybass3.bass_tags import BassTags
 
 
@@ -17,7 +18,7 @@ PulseHookCallable = T.Callable[[int, bool], None] # song position in seconds and
 
 class MusicManager:
 
-    PULSE_TIMER: int = 500  # 500 ms/ or half a second
+    PULSE_TIMER: int = 750  # 500 ms/ or half a second
     pulser: QTimer
     pulse_hook: PulseHookCallable
 
@@ -38,16 +39,17 @@ class MusicManager:
     def start_pulser(self):
         if self.pulser is None:
             self.pulser = QTimer()
+            self.pulser.timeout.connect(self.on_pulse)
 
-        self.pulser.timeout.connect(self.on_pulse)
-        self.pulser.start(self.PULSE_TIMER)
+        if self.pulser.isActive() is False:
+            self.pulser.start(self.PULSE_TIMER)
 
     def stop_pulser(self, clear = False):
         if self.pulser is not None:
             self.pulser.stop()
 
             if clear is True:
-                self.pulse= None
+                self.pulser = None
 
     def on_pulse(self):
         if self._current_song is not None and self._current_song.is_playing is True:
@@ -87,6 +89,27 @@ class MusicManager:
         assert self._current_song is not None
         self._current_song.pause()
         self.stop_pulser()
+
+    def seek(self, position):
+        """
+
+        :param position: 0 to 100
+        :return:
+        """
+        if self._current_song is None:
+            return False
+
+        seek_to = self._current_song.duration * (position / 100)
+
+        try:
+            self._current_song.move2position_seconds(seek_to)
+        except BassException:
+            return False
+
+
+        return True
+
+
 
 
 class Switchboard(QObject):
@@ -176,7 +199,9 @@ class Switchboard(QObject):
     @Slot(result=bool)
     def stop(self):
         self.manager.stop()
+        self.seek(0)
         self.playerStatus.emit("stopped")
+        self.position.emit(0)
         return True
 
     @Slot(result=bool)
@@ -192,7 +217,7 @@ class Switchboard(QObject):
         :param position: 0 to 100
         :return:
         """
-        pass
+        return self.manager.seek(position)
 
 
 
