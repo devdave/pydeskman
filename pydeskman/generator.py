@@ -204,9 +204,13 @@ class Generator:
         if enable_debug is True:
             self.debugger = DeskManDebugWidget()
             self.debugger.attach_to_webview(self.view.browser)
-            self.debugger.show()
+
 
     def run(self):
+        self.view.show()
+        if self.debugger is not None:
+            self.debugger.show()
+
         sys.exit(self.app.exec_())
 
 
