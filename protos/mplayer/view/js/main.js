@@ -78,8 +78,20 @@ class MPlayerLogic {
 
 
         this.set_song_position(perc);
-
     }
+
+    user_adjusted_position(evt) {
+        console.log(evt, evt.target, evt.target.value);
+        this.switchboard.seek(evt.target.value).then(function(response) {
+            if(!response) {
+                let verified = evt.target.dataset['verified'];
+                evt.target.value = verified;
+            } else {
+                evt.target.dataset['verified'] = evt.target.value;
+            }
+        });
+    }
+
 
     set_song_position(position){
         this.position_elm.value = position
