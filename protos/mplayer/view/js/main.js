@@ -68,6 +68,14 @@ class MPlayerLogic {
         // TODO - this math is a tad hairy and I know there is a simpler equation
         let perc = 100 - (((this.song_length - position)/this.song_length) * 100)
 
+        let seconds = Math.floor(position%60);
+        let minutes = Math.floor(position/60);
+
+        // https://stackoverflow.com/a/2998874/9908
+        const zeroPad = (num, places) => String(num).padStart(2, '0');
+
+        this.current_time_elm.innerHTML = zeroPad(minutes, 2) + ":" + zeroPad(seconds, 2);
+
 
         console.log("Song is @ ", perc, "and is playing:", is_playing);
         this.set_song_position(perc);
