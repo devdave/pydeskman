@@ -64,7 +64,7 @@ class SeedPage(QWebEnginePage):
 
 
     def javaScriptConsoleMessage(self, level:QtWebEngineWidgets.QWebEnginePage.JavaScriptConsoleMessageLevel, message:str, lineNumber:int, sourceID:str) -> None:
-        QWebEnginePage.javaScriptConsoleMessage(self, level, message, lineNumber, sourceID)
+        # QWebEnginePage.javaScriptConsoleMessage(self, level, message, lineNumber, sourceID)
         log_level = {
             QWebEnginePage.JavaScriptConsoleMessageLevel.InfoMessageLevel: "INFO",
             QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel: "ERROR",
