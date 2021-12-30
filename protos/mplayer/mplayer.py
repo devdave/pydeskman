@@ -24,9 +24,13 @@ class MusicManager:
     _current_song: Song
 
     def __init__(self):
+        self.generator = None
         self._current_song = None
         self._current_meta = None
         self.pulser = None
+
+    def setGenerator(self, generator):
+        self.generator
 
     def setHook(self, hook: PulseHookCallable):
         self.pulse_hook = hook
