@@ -77,7 +77,6 @@ class MPlayerLogic {
         this.current_time_elm.innerHTML = zeroPad(minutes, 2) + ":" + zeroPad(seconds, 2);
 
 
-        console.log("Song is @ ", perc, "and is playing:", is_playing);
         this.set_song_position(perc);
 
     }
