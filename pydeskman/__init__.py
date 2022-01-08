@@ -1,4 +1,4 @@
-from .generator import GenerateApp, Generator
+from .generator import GenerateApp, Generator, QuickStart
 
 from PySide2.QtCore import QObject
 from PySide2.QtWidgets import QWidget

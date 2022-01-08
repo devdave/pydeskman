@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="./js/jquery-3.6.0.js"></script>
+    <script type="text/javascript" src="./js/jquery.serializejson.js"></script>
+</head>
+<body>
+<h1>Simple form</h1>
+<form method="post" id="simple_form">
+    <label>Your name</label>
+    <input type="text" name="name">
+    <br>
+
+    <button type="submit">Submit</button>
+</form>
+
+<h2>Checkbox form</h2>
+<form method="post" id="radio_form">
+    <label>Option 1</label>
+    <input type="checkbox" name="options[]" value="option1">
+    <br>
+    <label>Option 2</label>
+    <input type="checkbox" name="options[]" value="option2">
+    <br>
+    <label>Option 3</label>
+    <input type="checkbox" name="options[]" value="option3">
+    <br>
+    <button type="submit">Submit</button>
+</form>
+
+<script type="text/javascript">
+
+    async function serialize_form(form_elm) {
+        return $(form_elm).serializeJSON();
+    }
+
+    function process_simple_form(event) {
+        console.log(event, event.target);
+        event.preventDefault();
+
+        let form_elm = event.target;
+        let data = serialize_form(form_elm);
+        console.log(data);
+
+
+        return false;
+    }
+
+    function procesas_file_form(event){
+        event.preventDefault();
+
+        let data = serialize_form(event.target).then(data=>console.log(data));
+        console.log(data);
+
+
+        return false;
+    }
+
+    function process_radio_form(event) {
+        event.preventDefault();
+
+        let data = serialize_form(event.target).then(data=>console.log(data));
+
+
+        return false;
+    }
+
+    function app_loaded(channel) {
+        console.log("Client loaded");
+
+        document.getElementById('simple_form').addEventListener('submit', process_simple_form);
+
+        document.getElementById("radio_form").addEventListener('submit', process_radio_form);
+    }
+</script>
+
+</body>
+</html>

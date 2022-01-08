@@ -165,6 +165,15 @@ class Generator:
         if 'width' not in dims:
             raise ValueError("dims param must be a dict with a `width` key")
 
+        if isinstance(seed, str):
+            if Path(seed).exists() is True and seed.startswith("./"):
+                seed = Path(seed).absolute()
+            elif Path(seed) is False and seed.startswith("./"):
+                seed = (Path.cwd() / seed)
+
+            if Path(seed).exists() is False:
+                raise ValueError(f"Unable to find seed/starting view @ {seed=}")
+
         self.height = dims['height']
         self.width = dims['width']
         self.seed = seed

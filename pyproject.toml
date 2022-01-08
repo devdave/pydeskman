@@ -1,0 +1,6 @@
+[project]
+name = "pydeskman"
+description = "Python Desktop Manager similar to Electron.js"
+
+[dependancies]
+PySide2="5.15.2"
